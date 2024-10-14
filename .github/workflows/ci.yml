@@ -66,5 +66,5 @@ jobs:
         with:
           tool: nextest
       - run: |
-          cargo nextest run --workspcae
+          cargo nextest run --workspace
           cargo test --doc
