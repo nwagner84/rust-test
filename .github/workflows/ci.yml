@@ -13,7 +13,8 @@ jobs:
   ci:
     needs:
       - build
-    run: exit 0
+    steps:
+      run: exit 0
 
   build:
     runs-on: ubuntu-latest
