@@ -11,10 +11,11 @@ env:
 
 jobs:
   ci:
+    runs-on: ubuntu-latest
     needs:
       - build
     steps:
-      run: exit 0
+      - run: exit 0
 
   build:
     runs-on: ubuntu-latest
