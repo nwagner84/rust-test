@@ -16,6 +16,7 @@ jobs:
       contents: none
     needs:
       - check
+      - test
       - msrv
     steps:
       - run: exit 0
@@ -41,4 +42,29 @@ jobs:
     - run: |
         cargo check --workspace
 
-
+  test:
+    name: test (${{ matrix.target.os }} - ${{ matrix.target.toolchain }})
+    needs: check
+    strategy:
+      matrix:
+        target:
+          - { os: ubuntu-latest, toolchain: stable, triple: x86_64-unknown-linux-gnu }
+          - { os: ubuntu-latest, toolchain: beta, triple: x86_64-unknown-linux-gnu }
+          - { os: ubuntu-latest, toolchain: nightly, triple: x86_64-unknown-linux-gnu }
+          - { os: macos-latest, toolchain: stable, triple: x86_64-apple-darwin }
+          - { os: windows-latest, toolchain: stable, triple: x86_64-pc-windows-gnu }
+          - { os: windows-latest, toolchain: stable, triple: i686-pc-windows-msvc }
+    runs-on: ${{ matrix.target.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ matrix.target.toolchain }}
+          targets: ${{ matrix.target.triple }}
+      - uses: Swatinem/rust-cache@v2
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: nextest
+      - run: |
+          cargo nextest run --workspcae
+          cargo test --doc
